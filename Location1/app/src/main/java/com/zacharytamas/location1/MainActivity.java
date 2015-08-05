@@ -71,20 +71,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
+        mLocationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000);
 
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // TODO
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        // TODO
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        txtOutput.setText(Double.toString(location.getLatitude()));
     }
 }
