@@ -3,6 +3,7 @@ package com.example.android.location2_2;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -24,11 +25,11 @@ public class DetectedActivitiesIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ActivityRecognitionResult recognitionResult = ActivityRecognitionResult.extractResult(intent);
-
+        Log.i(TAG, "Handling intent");
         Intent newIntent = new Intent(Constants.BROADCAST_ACTION);
 
         ArrayList<DetectedActivity> activities = (ArrayList) recognitionResult.getProbableActivities();
         newIntent.putExtra(DETECTED_ACTIVITIES_EXTRA, activities);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(newIntent);
     }
 }
