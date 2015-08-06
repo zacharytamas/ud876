@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mLongitudeText;
     private TextView mLatitudeText;
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +77,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(getString(R.string.latitude) + String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(getString(R.string.longitude) + String.valueOf(mLastLocation.getLongitude()));
-        }
+        mLocationRequest = LocationRequest.create()
+                .setInterval(1000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
+        mLatitudeText.setText(getString(R.string.latitude) + String.valueOf(location.getLatitude()));
+        mLongitudeText.setText(getString(R.string.longitude) + String.valueOf(location.getLongitude()));
     }
 }
