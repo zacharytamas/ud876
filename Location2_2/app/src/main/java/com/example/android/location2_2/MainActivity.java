@@ -3,6 +3,7 @@ package com.example.android.location2_2;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private GoogleApiClient mGoogleApiClient;
+    protected ActivityDetectionBroadcastReceiver mBroadcastReceiver;
     private TextView mStatus;
     private Button mRequestButton;
     private Button mCancelButton;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mStatus = (TextView) findViewById(R.id.detectedActivities);
         mRequestButton = (Button) findViewById(R.id.request_activity_updates_button);
         mCancelButton = (Button) findViewById(R.id.remove_activity_updates_button);
+        mBroadcastReceiver = new ActivityDetectionBroadcastReceiver();
 
         buildGoogleApiClient();
     }
@@ -61,6 +64,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
         super.onStop();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mBroadcastReceiver,
+                        new IntentFilter(Constants.BROADCAST_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        super.onPause();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
