@@ -1,5 +1,6 @@
 package com.example.android.location2_1;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mLongitudeText;
     private TextView mLatitudeText;
     private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +75,20 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            mLatitudeText.setText(getString(R.string.latitude) + String.valueOf(mLastLocation.getLatitude()));
+            mLongitudeText.setText(getString(R.string.longitude) + String.valueOf(mLastLocation.getLongitude()));
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        // TODO Log this
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        // TODO Log this
     }
 }
