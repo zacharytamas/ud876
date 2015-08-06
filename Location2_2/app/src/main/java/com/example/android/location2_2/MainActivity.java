@@ -3,6 +3,8 @@ package com.example.android.location2_2;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,7 +16,10 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
@@ -98,7 +103,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            ArrayList<DetectedActivity> activities = intent.getParcelableArrayListExtra(
+                    DetectedActivitiesIntentService.DETECTED_ACTIVITIES_EXTRA);
+
+            String strStatus = "";
+
+            for (DetectedActivity detectedActivity : activities) {
+                strStatus += getActivityString(detectedActivity) + "\n";
+            }
+
+            mStatus.setText(strStatus);
 
         }
+
+    }
+
+    private String getActivityString(DetectedActivity detectedActivity) {
+        Resources resources = this.getResources();
+        String activity;
+        switch (detectedActivity.getType()) {
+            case DetectedActivity.IN_VEHICLE:
+                activity = resources.getString(R.string.in_vehicle);
+            case DetectedActivity.ON_BICYCLE:
+                activity = resources.getString(R.string.on_bicycle);
+            case DetectedActivity.ON_FOOT:
+                activity = resources.getString(R.string.on_foot);
+            case DetectedActivity.RUNNING:
+                activity = resources.getString(R.string.running);
+            case DetectedActivity.STILL:
+                activity = resources.getString(R.string.still);
+            default:
+                activity = resources.getString(R.string.unidentifiable_activity);
+        }
+
+        return activity + " " + detectedActivity.getConfidence() + "%";
     }
 }
