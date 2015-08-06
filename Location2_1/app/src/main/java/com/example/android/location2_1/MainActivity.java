@@ -8,12 +8,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private TextView mLongitudeText;
     private TextView mLatitudeText;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,15 @@ public class MainActivity extends AppCompatActivity implements
 
         mLongitudeText = (TextView) findViewById(R.id.longitudeTextView);
         mLatitudeText = (TextView) findViewById(R.id.latitudeTextview);
+        buildGoogleApiClient();
+    }
+
+    private void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .build();
     }
 
     @Override
